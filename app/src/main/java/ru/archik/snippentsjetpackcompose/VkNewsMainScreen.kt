@@ -12,17 +12,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.archik.snippentsjetpackcompose.navigation.AppNavGraph
+import ru.archik.snippentsjetpackcompose.navigation.NavigationState
 import ru.archik.snippentsjetpackcompose.navigation.Screen
+import ru.archik.snippentsjetpackcompose.navigation.remeberNavigtationState
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
-  val navHostController = rememberNavController()
+//  val navController = rememberNavController()
+//  val navigationState = remember {
+//    // Мы не можем сразу вызвать rememberNavController(), т.к.
+//    // remember принимает лямбду - функцию, которая не является composable - функцией
+//    // rememberNavController() - может вызываться только в composable - функции
+//    NavigationState(navController)
+//  }
+
+  // Выносим всю работу с навигацией в remeberNavigtationState
+  val navigationState = remeberNavigtationState()
 
   Scaffold(
     bottomBar = {
       BottomNavigation {
-        val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+        val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
         val currentRout = navBackStackEntry?.destination?.route
 
         val items = listOf(
@@ -34,15 +45,7 @@ fun MainScreen(viewModel: MainViewModel) {
           BottomNavigationItem(
             selected = currentRout == item.screen.route,
             onClick = {
-              navHostController.navigate(item.screen.route) {
-                launchSingleTop = true // не пересоздается экран если он текущий
-                // из бэкстэка удаляем все экраны до стартого экрана
-                popUpTo(Screen.NewsFeed.route) {
-                  // state сохраняется когда экраны удаляются из бэкстэка
-                  saveState = true
-                } // история переходов не хранится в приложении
-                restoreState = true // восстановление state после удаления экрана
-              }
+              navigationState.navigateTo(item.screen.route)
             },
             icon = {
               Icon(item.icon, contentDescription = null)
@@ -58,7 +61,7 @@ fun MainScreen(viewModel: MainViewModel) {
     }
   ) { paddingValues ->
     AppNavGraph(
-      navHostController = navHostController,
+      navHostController = navigationState.navHostController,
       homeScreenContent = {
         HomeScreen(
           viewModel = viewModel,
