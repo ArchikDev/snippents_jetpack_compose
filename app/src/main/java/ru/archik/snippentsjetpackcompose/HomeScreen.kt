@@ -1,6 +1,7 @@
 package ru.archik.snippentsjetpackcompose
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -38,8 +39,14 @@ fun HomeScreen(
     is HomeScreenState.Comments -> {
       CommentsScreen(
         feedPost = currentState.feedPost,
-        comments = currentState.comments
+        comments = currentState.comments,
+        onBackPressed = {
+          viewModel.closeComments()
+        }
       )
+      BackHandler { // Кнопка назад на устройстве
+        viewModel.closeComments()
+      }
     }
     is HomeScreenState.Initial -> {}
   }
@@ -87,8 +94,8 @@ private fun FeedPosts(
           onShareClickListener = { statisticItem ->
             viewModel.updateCount(feedPost, statisticItem)
           },
-          onCommentClickListener = { statisticItem ->
-            viewModel.updateCount(feedPost, statisticItem)
+          onCommentClickListener = {
+            viewModel.showComments(feedPost)
           },
           onLikeClickListener = { statisticItem ->
             viewModel.updateCount(feedPost, statisticItem)
