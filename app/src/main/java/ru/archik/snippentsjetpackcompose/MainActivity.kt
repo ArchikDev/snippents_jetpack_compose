@@ -13,41 +13,44 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
 import ru.archik.snippentsjetpackcompose.ui.theme.SnippentsJetpackComposeTheme
 
 class MainActivity : ComponentActivity() {
-  private val viewModel by viewModels<MainViewModel>()
-
-  @RequiresApi(Build.VERSION_CODES.N)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-//    VK.login(activity, arrayListOf(VKScope.WALL, VKScope.PHOTOS))
 
     setContent {
       SnippentsJetpackComposeTheme {
 
+        val viewModel: MainViewModel = viewModel()
+        val authState = viewModel.authState.observeAsState(AuthState.Initial)
+
         val launcher = rememberLauncherForActivityResult(
           contract = VK.getVKAuthActivityResultContract(),
         ) {
-          when (it) {
-            is VKAuthenticationResult.Success -> {
-              Log.d("MainActivity", "success")
-            }
-            is VKAuthenticationResult.Failed -> {
-              Log.d("MainActivity", "error")
-            }
-          }
+          viewModel.performAuthResult(it)
         }
 
-        launcher.launch(listOf(VKScope.WALL))
-
-        MainScreen(viewModel)
+        when (authState.value) {
+          is AuthState.Authorized -> {
+            MainScreen()
+          }
+          is AuthState.NotAuthorized -> {
+            LoginScreen {
+              launcher.launch(listOf(VKScope.WALL))
+            }
+          }
+          else -> {}
+        }
       }
     }
   }
