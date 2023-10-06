@@ -4,11 +4,8 @@ import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.launch
-import ru.archik.snippentsjetpackcompose.data.mapper.NewsFeedMapper
-import ru.archik.snippentsjetpackcompose.data.network.ApiFactory
+import ru.archik.snippentsjetpackcompose.data.repository.NewsFeedRepository
 import ru.archik.snippentsjetpackcompose.domain.FeedPost
 import ru.archik.snippentsjetpackcompose.domain.StatisticItem
 
@@ -19,7 +16,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
   private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
   val screenState: LiveData<NewsFeedScreenState> = _screenState
 
-  private val mapper = NewsFeedMapper()
+  private val repository = NewsFeedRepository(application)
 
   init {
     loadRecommendations()
@@ -27,13 +24,18 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
   private fun loadRecommendations() {
     viewModelScope.launch {
-      val storage = VKPreferencesKeyValueStorage(getApplication())
-      val token = VKAccessToken.restore(storage) ?: return@launch // return@launch - выход из коррутины
-
-      val response = ApiFactory.apiService.loadRecommendations(token.accessToken)
-      val feedPost = mapper.mapResponseToPosts(response)
+      val feedPost = repository.loadRecommendations()
 
       _screenState.value = NewsFeedScreenState.Posts(posts = feedPost)
+    }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.N)
+  fun changeLikeStatus(feedPost: FeedPost) {
+    viewModelScope.launch {
+      repository.changeLikeStatus(feedPost)
+
+      _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
     }
   }
 
