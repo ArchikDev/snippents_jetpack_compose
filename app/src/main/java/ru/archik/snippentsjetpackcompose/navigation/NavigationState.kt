@@ -2,30 +2,34 @@ package ru.archik.snippentsjetpackcompose.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import ru.archik.snippentsjetpackcompose.domain.FeedPost
 
 class NavigationState(
   val navHostController: NavHostController
 ) {
+
   fun navigateTo(route: String) {
     navHostController.navigate(route) {
-      launchSingleTop = true // не пересоздается экран если он текущий
-      // из бэкстэка удаляем все экраны до стартого экрана
-      // navHostController.graph.startDestinationId - получаем первый экран
-      popUpTo(navHostController.graph.startDestinationId) {
-        // state сохраняется когда экраны удаляются из бэкстэка
+      popUpTo(navHostController.graph.findStartDestination().id) {
         saveState = true
-      } // история переходов не хранится в приложении
-      restoreState = true // восстановление state после удаления экрана
+      }
+      launchSingleTop = true
+      restoreState = true
     }
+  }
+
+  fun navigateToComments(feedPost: FeedPost) {
+    navHostController.navigate(Screen.Comments.getRouteWithArgs(feedPost)) // comments/15
   }
 }
 
 @Composable
-fun remeberNavigtationState(
+fun rememberNavigationState(
   navHostController: NavHostController = rememberNavController()
-):NavigationState {
+): NavigationState {
   return remember {
     NavigationState(navHostController)
   }

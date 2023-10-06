@@ -1,23 +1,27 @@
-package ru.archik.snippentsjetpackcompose
+package ru.archik.snippentsjetpackcompose.presentation.main
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.vk.api.sdk.VK
+import com.vk.api.sdk.VKPreferencesKeyValueStorage
+import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthenticationResult
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.PostComment
-import ru.archik.snippentsjetpackcompose.domain.StatisticItem
+import ru.archik.snippentsjetpackcompose.presentation.main.AuthState
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
   private val _authState = MutableLiveData<AuthState>(AuthState.Initial)
   val authState: LiveData<AuthState> = _authState
 
   init {
-    _authState.value = if (VK.isLoggedIn()) AuthState.Authorized else AuthState.NotAuthorized
+    val storage = VKPreferencesKeyValueStorage(application)
+    val token = VKAccessToken.restore(storage)
+    val loggedIn = token != null && token.isValid
+
+    _authState.value = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
   }
 
   fun performAuthResult(result: VKAuthenticationResult) {

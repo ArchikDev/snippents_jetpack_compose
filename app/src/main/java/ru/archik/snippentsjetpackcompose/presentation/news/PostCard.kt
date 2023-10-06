@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose
+package ru.archik.snippentsjetpackcompose.presentation.news
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.archik.snippentsjetpackcompose.R
 import ru.archik.snippentsjetpackcompose.domain.FeedPost
 import ru.archik.snippentsjetpackcompose.domain.StatisticItem
 import ru.archik.snippentsjetpackcompose.domain.StatisticType
