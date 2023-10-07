@@ -7,6 +7,9 @@ sealed class NewsFeedScreenState {
 
   object Initial: NewsFeedScreenState() // хорошая практика, чтобы обьект был не нулабельный
 
-  data class Posts(val posts: List<FeedPost>): NewsFeedScreenState()
-  data class Comments(val feedPost: FeedPost, val comments: List<PostComment>): NewsFeedScreenState()
+  data class Posts(
+    val posts: List<FeedPost>,
+    val nextDataIsLoading: Boolean = false,
+  ): NewsFeedScreenState()
+
 }

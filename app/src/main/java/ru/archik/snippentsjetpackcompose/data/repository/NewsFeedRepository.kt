@@ -21,15 +21,28 @@ class NewsFeedRepository(application: Application) {
 
   private val _feedPosts = mutableListOf<FeedPost>()
   val feedPosts: List<FeedPost>
-  get() = _feedPosts.toList() // копия коллекции
+    get() = _feedPosts.toList() // копия коллекции
+
+  private var nextFrom: String? = null
 
   suspend fun loadRecommendations(): List<FeedPost> {
-    val response = apiService.loadRecommendations(getAccessToken())
+    val startFrom = nextFrom
+
+    if (startFrom == null && feedPosts.isNotEmpty()) return feedPosts
+
+    val response = if (startFrom == null) {
+      apiService.loadRecommendations(getAccessToken())
+    } else {
+      apiService.loadRecommendations(getAccessToken(), startFrom)
+    }
+
+    nextFrom = response.newsFeedContent.nextFrom
+
     val posts = mapper.mapResponseToPosts(response)
 
     _feedPosts.addAll(posts)
 
-    return posts
+    return feedPosts
   }
 
   private fun getAccessToken(): String {
