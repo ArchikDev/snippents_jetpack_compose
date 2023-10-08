@@ -8,6 +8,7 @@ import com.vk.api.sdk.auth.VKAccessToken
 import ru.archik.snippentsjetpackcompose.data.mapper.NewsFeedMapper
 import ru.archik.snippentsjetpackcompose.data.network.ApiFactory
 import ru.archik.snippentsjetpackcompose.domain.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.PostComment
 import ru.archik.snippentsjetpackcompose.domain.StatisticItem
 import ru.archik.snippentsjetpackcompose.domain.StatisticType
 
@@ -43,6 +44,16 @@ class NewsFeedRepository(application: Application) {
     _feedPosts.addAll(posts)
 
     return feedPosts
+  }
+
+  suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+    val comments = apiService.getComments(
+      token = getAccessToken(),
+      ownerId = feedPost.communityId,
+      postId = feedPost.id
+    )
+
+    return mapper.mapResponseToComments(comments)
   }
 
   private fun getAccessToken(): String {

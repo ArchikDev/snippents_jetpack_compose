@@ -1,7 +1,9 @@
 package ru.archik.snippentsjetpackcompose.data.mapper
 
+import ru.archik.snippentsjetpackcompose.data.model.CommentsResponseDto
 import ru.archik.snippentsjetpackcompose.data.model.NewsFeedResponseDto
 import ru.archik.snippentsjetpackcompose.domain.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.PostComment
 import ru.archik.snippentsjetpackcompose.domain.StatisticItem
 import ru.archik.snippentsjetpackcompose.domain.StatisticType
 import java.text.SimpleDateFormat
@@ -22,7 +24,7 @@ class NewsFeedMapper {
         id = post.id,
         communityId = post.communityId,
         communityName = group.name,
-        publicationDate = mapTimestampToDate(post.date * 1000),
+        publicationDate = mapTimestampToDate(post.date),
         communityImageUrl = group.imageUrl,
         contentText = post.text,
         contentImageUrl = post.attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -40,8 +42,32 @@ class NewsFeedMapper {
     return result
   }
 
+  fun mapResponseToComments(responseDto: CommentsResponseDto): List<PostComment> {
+    val result = mutableListOf<PostComment>()
+
+    val comments = responseDto.content.comments
+    val profiles = responseDto.content.profiles
+
+    for (comment in comments) {
+      val author = profiles.firstOrNull { it.id == comment.authorId } ?: continue
+
+      if (comment.text.isBlank()) continue
+
+      val postComment = PostComment(
+        id = comment.id,
+        authorName = "${author.firstName} ${author.lastName}",
+        authorAvatarUrl = author.avatarUrl,
+        commentText = comment.text,
+        publicDate = mapTimestampToDate(comment.date)
+      )
+      result.add(postComment)
+    }
+
+    return result
+  }
+
   private fun mapTimestampToDate(timestamp: Long): String {
-    val date = Date(timestamp)
+    val date = Date(timestamp * 1000)
 
     return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
   }

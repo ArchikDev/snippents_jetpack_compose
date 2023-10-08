@@ -1,19 +1,24 @@
 package ru.archik.snippentsjetpackcompose.presentation.comments
 
-import androidx.compose.foundation.Image
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import ru.archik.snippentsjetpackcompose.R
 import ru.archik.snippentsjetpackcompose.domain.FeedPost
 import ru.archik.snippentsjetpackcompose.domain.PostComment
 
@@ -23,7 +28,10 @@ fun CommentsScreen(
   onBackPressed: () -> Unit
 ) {
   val viewModel: CommentsViewModel = viewModel(
-    factory = CommentsViewModelFactory(feedPost)
+    factory = CommentsViewModelFactory(
+      feedPost,
+      LocalContext.current.applicationContext as Application // Так получаем Application внутри compose функции
+    )
   )
 
   val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
@@ -34,7 +42,7 @@ fun CommentsScreen(
       topBar = {
         TopAppBar(
           title = {
-            Text(text = "Comments for FeedPost ID: ${feedPost.id}")
+            Text(text = stringResource(R.string.comments_title))
           },
           navigationIcon = {
             IconButton(onClick = { onBackPressed() }) {
@@ -54,7 +62,8 @@ fun CommentsScreen(
           start = 8.dp,
           end = 8.dp,
           bottom = 72.dp
-        )
+        ),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
       ) {
         items(
           items = currentState.comments,
@@ -79,15 +88,15 @@ private fun CommentItem(
       vertical = 4.dp
     )
   ) {
-    Image(
-      modifier = Modifier.size(24.dp),
-      painter = painterResource(id = comment.authorAvatar),
+    AsyncImage(
+      model = comment.authorAvatarUrl,
+      modifier = Modifier.size(48.dp).clip(CircleShape),
       contentDescription = null
     )
     Spacer(modifier = Modifier.width(8.dp))
     Column {
       Text(
-        text = "${comment.authorName} CommentId: ${comment.id}",
+        text = comment.authorName,
         color = MaterialTheme.colors.onPrimary,
         fontSize = 12.sp
       )

@@ -2,6 +2,8 @@ package ru.archik.snippentsjetpackcompose.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.archik.snippentsjetpackcompose.data.model.CommentsContentDto
+import ru.archik.snippentsjetpackcompose.data.model.CommentsResponseDto
 import ru.archik.snippentsjetpackcompose.data.model.LikesCountResponseDto
 import ru.archik.snippentsjetpackcompose.data.model.NewsFeedResponseDto
 
@@ -38,5 +40,12 @@ interface ApiService {
     @Query("owner_id") ownerId: Long,
     @Query("item_id") postId: Long
   )
+
+  @GET("wall.getComments?v=5.131&extended=1&fields=photo_100")
+  suspend fun getComments(
+    @Query("access_token") token: String,
+    @Query("owner_id") ownerId: Long,
+    @Query("post_id") postId: Long
+  ): CommentsResponseDto
 
 }
