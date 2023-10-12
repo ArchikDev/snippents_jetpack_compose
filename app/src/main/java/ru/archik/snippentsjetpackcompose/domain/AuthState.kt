@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose.presentation.main
+package ru.archik.snippentsjetpackcompose.domain
 
 sealed class AuthState {
   object Authorized: AuthState()
