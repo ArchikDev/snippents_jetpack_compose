@@ -2,8 +2,10 @@ package ru.archik.snippentsjetpackcompose.presentation.news
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.archik.snippentsjetpackcompose.data.repository.NewsFeedRepository
@@ -12,6 +14,10 @@ import ru.archik.snippentsjetpackcompose.domain.StatisticItem
 import ru.archik.snippentsjetpackcompose.extensions.mergeWith
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
+
+  private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+    Log.d("vmNewsFeed", "Error")
+  }
 
   private val repository = NewsFeedRepository(application)
 
@@ -44,13 +50,13 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
   @RequiresApi(Build.VERSION_CODES.N)
   fun changeLikeStatus(feedPost: FeedPost) {
-    viewModelScope.launch {
+    viewModelScope.launch(exceptionHandler) {
       repository.changeLikeStatus(feedPost)
     }
   }
 
   fun remove(feedPost: FeedPost) {
-    viewModelScope.launch {
+    viewModelScope.launch(exceptionHandler) {
       repository.deletePost(feedPost)
     }
 

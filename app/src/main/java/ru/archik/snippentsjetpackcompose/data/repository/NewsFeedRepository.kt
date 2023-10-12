@@ -7,14 +7,13 @@ import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import ru.archik.snippentsjetpackcompose.data.mapper.NewsFeedMapper
 import ru.archik.snippentsjetpackcompose.data.network.ApiFactory
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.PostComment
-import ru.archik.snippentsjetpackcompose.domain.StatisticItem
-import ru.archik.snippentsjetpackcompose.domain.StatisticType
+import ru.archik.snippentsjetpackcompose.domain.*
 import ru.archik.snippentsjetpackcompose.extensions.mergeWith
+import java.lang.Thread.State
 
 class NewsFeedRepository(application: Application) {
 
@@ -49,6 +48,12 @@ class NewsFeedRepository(application: Application) {
       emit(feedPosts)
     }
   }
+//    .map { NewsFeedResult.Success(posts = it) as NewsFeedResult}
+    .retry(2) { // если ошибка (2) - кол-во повторений
+      delay(RETRY_TIMEOUT_MILLIS) // задержка перед повтором
+      true // Чтобы при любой ошибки повторялся снова запрос
+    }
+//    .catch { emit(NewsFeedResult.Error) }
 
   private val apiService = ApiFactory.apiService
   private val mapper = NewsFeedMapper()
@@ -71,14 +76,17 @@ class NewsFeedRepository(application: Application) {
     nextDataNeededEvents.emit(Unit)
   }
 
-  suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+  fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow {
     val comments = apiService.getComments(
       token = getAccessToken(),
       ownerId = feedPost.communityId,
       postId = feedPost.id
     )
 
-    return mapper.mapResponseToComments(comments)
+    emit(mapper.mapResponseToComments(comments))
+  }.retry {
+    delay(RETRY_TIMEOUT_MILLIS)
+    true
   }
 
   private fun getAccessToken(): String {
@@ -127,5 +135,9 @@ class NewsFeedRepository(application: Application) {
     _feedPosts.remove(feedPost)
 
     refreshedListFlow.emit(feedPosts)
+  }
+
+  companion object {
+    private const val RETRY_TIMEOUT_MILLIS = 3000L
   }
 }
