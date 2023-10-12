@@ -2,10 +2,10 @@ package ru.archik.snippentsjetpackcompose.data.mapper
 
 import ru.archik.snippentsjetpackcompose.data.model.CommentsResponseDto
 import ru.archik.snippentsjetpackcompose.data.model.NewsFeedResponseDto
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.PostComment
-import ru.archik.snippentsjetpackcompose.domain.StatisticItem
-import ru.archik.snippentsjetpackcompose.domain.StatisticType
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.PostComment
+import ru.archik.snippentsjetpackcompose.domain.entity.StatisticItem
+import ru.archik.snippentsjetpackcompose.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue

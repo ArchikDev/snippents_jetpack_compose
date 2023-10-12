@@ -8,9 +8,12 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.archik.snippentsjetpackcompose.data.repository.NewsFeedRepository
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.StatisticItem
+import ru.archik.snippentsjetpackcompose.data.repository.NewsFeedRepositoryImpl
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.usecases.ChangeLikeStateUseCase
+import ru.archik.snippentsjetpackcompose.domain.usecases.DeletePostUseCase
+import ru.archik.snippentsjetpackcompose.domain.usecases.GetRecommendationsUseCase
+import ru.archik.snippentsjetpackcompose.domain.usecases.LoadNextDataUseCase
 import ru.archik.snippentsjetpackcompose.extensions.mergeWith
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -19,9 +22,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     Log.d("vmNewsFeed", "Error")
   }
 
-  private val repository = NewsFeedRepository(application)
+  private val repository = NewsFeedRepositoryImpl(application)
 
-  private val recommendationsFlow = repository.recommendations
+  private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
+  private val loadNextDataUseCase = LoadNextDataUseCase(repository)
+  private val changeLikeStatusUseCase = ChangeLikeStateUseCase(repository)
+  private val deletePostUseCase = DeletePostUseCase(repository)
+
+  private val recommendationsFlow = getRecommendationsUseCase()
 
   private val loadNextDataEvents = MutableSharedFlow<Unit>()
   private val loadNextDataFlow = flow {
@@ -44,20 +52,20 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
   fun loadNextRecommendations() {
     viewModelScope.launch {
       loadNextDataEvents.emit(Unit)
-      repository.loadNextData()
+      loadNextDataUseCase()
     }
   }
 
   @RequiresApi(Build.VERSION_CODES.N)
   fun changeLikeStatus(feedPost: FeedPost) {
     viewModelScope.launch(exceptionHandler) {
-      repository.changeLikeStatus(feedPost)
+      changeLikeStatusUseCase(feedPost)
     }
   }
 
   fun remove(feedPost: FeedPost) {
     viewModelScope.launch(exceptionHandler) {
-      repository.deletePost(feedPost)
+      deletePostUseCase(feedPost)
     }
 
   }

@@ -10,12 +10,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
 import ru.archik.snippentsjetpackcompose.ui.theme.DarkBlue
 
 @RequiresApi(Build.VERSION_CODES.N)

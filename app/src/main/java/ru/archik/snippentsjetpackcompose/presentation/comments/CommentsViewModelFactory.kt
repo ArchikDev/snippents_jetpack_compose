@@ -3,7 +3,7 @@ package ru.archik.snippentsjetpackcompose.presentation.comments
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
 
 class CommentsViewModelFactory(
   private val feedPost: FeedPost,

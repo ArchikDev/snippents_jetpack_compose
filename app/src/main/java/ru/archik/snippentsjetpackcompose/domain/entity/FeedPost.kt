@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose.domain
+package ru.archik.snippentsjetpackcompose.domain.entity
 
 import android.os.Bundle
 import android.os.Parcelable

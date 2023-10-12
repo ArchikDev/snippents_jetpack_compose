@@ -19,9 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.archik.snippentsjetpackcompose.R
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.StatisticItem
-import ru.archik.snippentsjetpackcompose.domain.StatisticType
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.StatisticItem
+import ru.archik.snippentsjetpackcompose.domain.entity.StatisticType
 import ru.archik.snippentsjetpackcompose.ui.theme.DarkRed
 
 @Composable

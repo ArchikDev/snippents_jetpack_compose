@@ -1,7 +1,6 @@
 package ru.archik.snippentsjetpackcompose.presentation.news
 
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.PostComment
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

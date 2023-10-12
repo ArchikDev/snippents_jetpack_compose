@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose.domain
+package ru.archik.snippentsjetpackcompose.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

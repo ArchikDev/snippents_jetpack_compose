@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose.domain
+package ru.archik.snippentsjetpackcompose.domain.entity
 
 sealed class NewsFeedResult {
   object Error : NewsFeedResult()

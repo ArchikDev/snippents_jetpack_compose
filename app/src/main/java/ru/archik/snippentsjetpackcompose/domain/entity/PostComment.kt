@@ -1,4 +1,4 @@
-package ru.archik.snippentsjetpackcompose.domain
+package ru.archik.snippentsjetpackcompose.domain.entity
 
 data class PostComment(
   val id: Long,

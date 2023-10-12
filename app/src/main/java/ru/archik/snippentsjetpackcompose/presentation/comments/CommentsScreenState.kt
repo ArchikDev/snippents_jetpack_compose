@@ -1,7 +1,7 @@
 package ru.archik.snippentsjetpackcompose.presentation.comments
 
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
-import ru.archik.snippentsjetpackcompose.domain.PostComment
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.PostComment
 
 sealed class CommentsScreenState {
   object Initial: CommentsScreenState()

@@ -10,7 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
-import ru.archik.snippentsjetpackcompose.domain.AuthState
+import ru.archik.snippentsjetpackcompose.domain.entity.AuthState
 import ru.archik.snippentsjetpackcompose.ui.theme.SnippentsJetpackComposeTheme
 
 class MainActivity : ComponentActivity() {

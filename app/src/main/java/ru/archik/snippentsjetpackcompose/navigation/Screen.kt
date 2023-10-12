@@ -2,7 +2,7 @@ package ru.archik.snippentsjetpackcompose.navigation
 
 import android.net.Uri
 import com.google.gson.Gson
-import ru.archik.snippentsjetpackcompose.domain.FeedPost
+import ru.archik.snippentsjetpackcompose.domain.entity.FeedPost
 
 sealed class Screen(
   val route: String
